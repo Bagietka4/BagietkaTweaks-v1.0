@@ -1,134 +1,149 @@
-# Skrypt BagietkaTweaks v1.2
+# BagietkaTweaks v1.1 - GUI Console Script
+# Autor: Bagietka4 & ChatGPT
 
-# Funkcje Tweaks
-function Tweak-1 {
-    Write-Host "Wykonywanie Tweaka 1: Włącz tryb gry..." -ForegroundColor Cyan
-    # Dodaj funkcje tweakowania trybu gry
-    Write-Host "Tryb gry włączony!" -ForegroundColor Green
-    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
+function Show-Menu {
+    Clear-Host
+    $Host.UI.RawUI.BackgroundColor = "Black"
+    $Host.UI.RawUI.ForegroundColor = "Magenta"
+    Clear-Host
+
+    $width = $Host.UI.RawUI.WindowSize.Width
+    $title = "BagietkaTweaks v1.1"
+    $centeredTitle = $title.PadLeft(($width + $title.Length) / 2)
+
+    Write-Host ""
+    Write-Host $centeredTitle
+    Write-Host ("=" * $width)
+    Write-Host ""
+    Write-Host "1. Ping Tweaks"
+    Write-Host "2. Input Delay Tweaks"
+    Write-Host "3. Performance Boost"
+    Write-Host "4. System Clean Tweaks"
+    Write-Host "5. Net & Update Tweaks"
+    Write-Host "6. Bezpieczeństwo i porządek"
+    Write-Host "7. Taskbar Cleanup"
+    Write-Host "8. WindowsDebloat"
+    Write-Host "9. Utwórz punkt przywracania"
+    Write-Host "10. Zamknij PowerShell"
+    Write-Host ""
 }
 
-function Tweak-2 {
-    Write-Host "Wykonywanie Tweaka 2: Usuń niepotrzebne aplikacje..." -ForegroundColor Cyan
-    # Dodaj funkcje usuwania aplikacji
-    Write-Host "Niepotrzebne aplikacje usunięte!" -ForegroundColor Green
-    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
+function Apply-PingTweaks {
+    Write-Host "`n[+] Wdrażanie Ping Tweaks..."
+    netsh int tcp set global ecncapability=disabled
+    netsh int tcp set global autotuninglevel=disabled
+    netsh int tcp set global timestamps=disabled
+    Start-Sleep 1
 }
 
-function Tweak-3 {
-    Write-Host "Wykonywanie Tweaka 3: Optymalizacja systemu..." -ForegroundColor Cyan
-    # Dodaj funkcje optymalizacji systemu
-    Write-Host "Optymalizacja systemu zakończona!" -ForegroundColor Green
-    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
+function Apply-InputDelayTweaks {
+    Write-Host "`n[+] Wdrażanie Input Delay Tweaks..."
+    powercfg -h off
+    bcdedit /set disabledynamictick yes
+    bcdedit /set useplatformtick yes
+    Start-Sleep 1
 }
 
-# Funkcja do tweaków TCP/Internet
-function Tweak-Network {
-    Write-Host "Wykonywanie Tweaka: Poprawa pingów i optymalizacja internetu..." -ForegroundColor Cyan
-
-    # Optymalizacja TCP
-    Write-Host "Optymalizacja TCP (Zwiększanie wydajności sieci)" -ForegroundColor Yellow
-    Set-NetTCPSetting -SettingName Internet
-    Write-Host "Optymalizacja TCP zakończona!" -ForegroundColor Green
-
-    # Zwiększenie rozmiaru bufora TCP
-    Write-Host "Zwiększanie rozmiaru bufora TCP dla lepszej wydajności..." -ForegroundColor Yellow
-    netsh int tcp set global autotuninglevel=normal
-    Write-Host "Zwiększenie bufora TCP zakończone!" -ForegroundColor Green
-
-    # Optymalizacja pingów
-    Write-Host "Optymalizacja ustawień pingów (Opóźnienia)" -ForegroundColor Yellow
-    netsh int ip set global taskoffload=disabled
-    Write-Host "Optymalizacja pingów zakończona!" -ForegroundColor Green
-
-    # Wyłączenie Time-Wait (pomaga w zmniejszeniu opóźnień)
-    Write-Host "Wyłączanie Time-Wait w TCP..." -ForegroundColor Yellow
-    New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters' -Name "TcpNumConnections" -Value 65535 -PropertyType DWord -Force
-    Write-Host "Wyłączanie Time-Wait zakończone!" -ForegroundColor Green
-
-    # Finalizacja
-    Write-Host "Tweak TCP/Internet zakończony pomyślnie!" -ForegroundColor Green
-    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
+function Apply-PerformanceBoost {
+    Write-Host "`n[+] Wdrażanie Performance Boost..."
+    powercfg /setactive SCHEME_MAX
+    reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" /v StartupDelayInMSec /t REG_DWORD /d 0 /f
+    Start-Sleep 1
 }
 
-function Tweak-5 {
-    Write-Host "Wykonywanie Tweaka 5: Taskbar Cleanup..." -ForegroundColor Cyan
-    # Skrypt do usuwania zbędnych ikonek z paska zadań
-    Write-Host "Usunięte zbędne ikony z paska zadań!" -ForegroundColor Green
-    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
+function Apply-SystemCleanTweaks {
+    Write-Host "`n[+] Wdrażanie System Clean Tweaks..."
+    Cleanmgr /sagerun:1
+    Start-Sleep 1
 }
 
-function Tweak-6 {
-    Write-Host "Wykonywanie Tweaka 6: Windows Debloat..." -ForegroundColor Cyan
-    # Usuwanie aplikacji
-    Write-Host "Usuwanie zbędnych aplikacji..." -ForegroundColor Yellow
-    Get-AppxPackage -AllUsers | Remove-AppxPackage
-    Write-Host "Aplikacje usunięte!" -ForegroundColor Green
-
-    # Usuwanie Microsoft Edge
-    Write-Host "Usuwanie Microsoft Edge..." -ForegroundColor Yellow
-    Get-AppxPackage *Microsoft.MicrosoftEdge* | Remove-AppxPackage
-    Write-Host "Microsoft Edge usunięty!" -ForegroundColor Green
-
-    # Usuwanie OneDrive
-    Write-Host "Usuwanie OneDrive..." -ForegroundColor Yellow
-    Remove-Item -Path "C:\Users\$env:USERNAME\OneDrive" -Recurse -Force
-    Write-Host "OneDrive usunięty!" -ForegroundColor Green
-
-    # Wyłączenie telemetrii i diagnostyki
-    Write-Host "Wyłączanie telemetrii i diagnostyki..." -ForegroundColor Yellow
-    Set-Service -Name DiagTrack -StartupType Disabled
-    Write-Host "Telemetria wyłączona!" -ForegroundColor Green
-
-    # Finalizacja
-    Write-Host "Debloat systemu zakończony!" -ForegroundColor Green
-    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
+function Apply-NetUpdateTweaks {
+    Write-Host "`n[+] Wdrażanie Net & Update Tweaks..."
+    sc config wuauserv start= disabled
+    sc stop wuauserv
+    reg add "HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" /v TcpAckFrequency /t REG_DWORD /d 1 /f
+    Start-Sleep 1
 }
 
-function Tweak-7 {
-    Write-Host "Wykonywanie Tweaka 7: Windows Taskbar Cleanup..." -ForegroundColor Cyan
-    # Usuń lupę z paska zadań
-    Write-Host "Usuwanie lupy z paska zadań..." -ForegroundColor Yellow
-    reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "SearchboxTaskbarMode" /t REG_DWORD /d 0 /f
-    Write-Host "Lupa usunięta!" -ForegroundColor Green
-    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
+function Apply-SecurityTweaks {
+    Write-Host "`n[+] Wdrażanie tweaków bezpieczeństwa..."
+    reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware /t REG_DWORD /d 1 /f
+    reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v SubscribedContent-338388Enabled /t REG_DWORD /d 0 /f
+    Start-Sleep 1
 }
 
-# Menu wybierania opcji
-Write-Host "Wybierz Tweak do wykonania:" -ForegroundColor Yellow
-Write-Host "1. Tweak 1: Włącz tryb gry"
-Write-Host "2. Tweak 2: Usuń niepotrzebne aplikacje"
-Write-Host "3. Tweak 3: Optymalizacja systemu"
-Write-Host "4. Tweak 4: Optymalizacja TCP / Internet / Ping"
-Write-Host "5. Tweak 5: Taskbar Cleanup"
-Write-Host "6. Tweak 6: Windows Debloat"
-Write-Host "7. Tweak 7: Windows Taskbar Cleanup (Lupa)"
-
-$choice = Read-Host "Wybierz numer (1-7)"
-
-if ($choice -eq 1) {
-    Tweak-1
-}
-elseif ($choice -eq 2) {
-    Tweak-2
-}
-elseif ($choice -eq 3) {
-    Tweak-3
-}
-elseif ($choice -eq 4) {
-    Tweak-Network
-}
-elseif ($choice -eq 5) {
-    Tweak-5
-}
-elseif ($choice -eq 6) {
-    Tweak-6
-}
-elseif ($choice -eq 7) {
-    Tweak-7
-}
-else {
-    Write-Host "Nieprawidłowy wybór! Wybierz numer od 1 do 7." -ForegroundColor Red
+function Apply-TaskbarCleanup {
+    Write-Host "`n[+] Usuwanie wyszukiwarki i ikony lupy..."
+    reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Search" /v SearchboxTaskbarMode /f
+    reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v TaskbarDa /t REG_DWORD /d 0 /f
+    Stop-Process -Name explorer -Force
+    Start explorer
+    Start-Sleep 1
 }
 
-Write-Host "Dziękujemy za użycie BagietkaTweaks!" -ForegroundColor Magenta
+function Apply-WindowsDebloat {
+    Write-Host "`n[+] Wykonywanie Windows Debloat..."
+    
+    # 1. Usuń UWP apps
+    Get-AppxPackage *onenote* | Remove-AppxPackage
+    Get-AppxPackage *xbox* | Remove-AppxPackage
+    Get-AppxPackage *people* | Remove-AppxPackage
+    Get-AppxPackage *news* | Remove-AppxPackage
+    Get-AppxPackage *mail* | Remove-AppxPackage
+
+    # 2. Usuń Edge
+    try {
+        Start-Process "cmd.exe" "/c taskkill /f /im msedge.exe & rmdir /s /q %ProgramFiles(x86)%\Microsoft\Edge" -Verb RunAs
+    } catch {}
+
+    # 3. Usuń OneDrive
+    taskkill /f /im OneDrive.exe
+    Start-Process "$env:SystemRoot\System32\OneDriveSetup.exe" "/uninstall" -Verb RunAs
+
+    # 4. Wyłącz telemetrię
+    reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection" /v AllowTelemetry /t REG_DWORD /d 0 /f
+
+    # 5. Zablokuj aktualizacje
+    sc config wuauserv start= disabled
+    sc stop wuauserv
+
+    # 6. Usuń sugestie i powiadomienia
+    reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" /v SubscribedContent-310093Enabled /t REG_DWORD /d 0 /f
+
+    # 7. Wyłącz usługi w tle
+    Get-Service "DiagTrack","dmwappushservice" | Set-Service -StartupType Disabled
+
+    Start-Sleep 1
+}
+
+function Create-RestorePoint {
+    Write-Host "`n[+] Tworzenie punktu przywracania systemu..."
+    Enable-ComputerRestore -Drive "C:\"
+    Checkpoint-Computer -Description "BagietkaTweaks Restore Point" -RestorePointType "MODIFY_SETTINGS"
+    Start-Sleep 2
+}
+
+do {
+    Show-Menu
+    $option = Read-Host "Wybierz opcję (1-10)"
+
+    switch ($option) {
+        "1" { Apply-PingTweaks }
+        "2" { Apply-InputDelayTweaks }
+        "3" { Apply-PerformanceBoost }
+        "4" { Apply-SystemCleanTweaks }
+        "5" { Apply-NetUpdateTweaks }
+        "6" { Apply-SecurityTweaks }
+        "7" { Apply-TaskbarCleanup }
+        "8" { Apply-WindowsDebloat }
+        "9" { Create-RestorePoint }
+        "10" { exit }
+        default { Write-Host "`nNieprawidłowa opcja!" }
+    }
+
+    if ($option -ne "10") {
+        Write-Host "`nNaciśnij Enter, aby powrócić do menu..."
+        Read-Host
+    }
+
+} while ($option -ne "10")
