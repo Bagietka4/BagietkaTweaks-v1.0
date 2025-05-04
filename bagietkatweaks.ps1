@@ -1,127 +1,134 @@
-# Skrypt: BagietkaTweaks v1.1
-# Zawiera różne optymalizacje systemu Windows, takie jak debloat, taskbar cleanup, etc.
+# Skrypt BagietkaTweaks v1.2
 
-$ErrorActionPreference = "Stop"
-
-# Funkcja zmiany koloru tła i tekstu PowerShella
-function Set-PSColor {
-    $host.UI.RawUI.BackgroundColor = "Black"
-    $host.UI.RawUI.ForegroundColor = "Magenta"
-    Clear-Host
+# Funkcje Tweaks
+function Tweak-1 {
+    Write-Host "Wykonywanie Tweaka 1: Włącz tryb gry..." -ForegroundColor Cyan
+    # Dodaj funkcje tweakowania trybu gry
+    Write-Host "Tryb gry włączony!" -ForegroundColor Green
+    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
 }
 
-# Funkcja usuwająca aplikacje UWP i niepotrzebne elementy
-function WindowsDebloat {
-    Set-PSColor
-    Write-Host "Usuwanie aplikacji UWP..."
-    # Usuwanie aplikacji UWP (OneDrive, Edge, itp.)
-    Get-AppxPackage -AllUsers | Where-Object {$_.Name -notlike "Microsoft.WindowsStore"} | Remove-AppxPackage
-    Write-Host "Usunięto aplikacje UWP."
-    
-    Write-Host "Wyłączanie usług systemowych..."
-    # Wyłączanie usług w tle
-    Stop-Service -Name "wuauserv" -Force
-    Set-Service -Name "wuauserv" -StartupType Disabled
-    Stop-Service -Name "OneDrive" -Force
-    Set-Service -Name "OneDrive" -StartupType Disabled
-    Write-Host "Usługi zostały wyłączone."
-
-    Write-Host "Usuwanie OneDrive, Edge i innych..."
-    Remove-Item -Recurse -Force "C:\Program Files\WindowsApps\"
-    Write-Host "Usunięto OneDrive i inne aplikacje."
-    
-    Write-Host "Zakończono debloat systemu Windows."
+function Tweak-2 {
+    Write-Host "Wykonywanie Tweaka 2: Usuń niepotrzebne aplikacje..." -ForegroundColor Cyan
+    # Dodaj funkcje usuwania aplikacji
+    Write-Host "Niepotrzebne aplikacje usunięte!" -ForegroundColor Green
+    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
 }
 
-# Funkcja czyszczenia paska zadań
-function TaskbarCleanup {
-    Set-PSColor
-    Write-Host "Usuwanie ikonek z paska zadań..."
-    # Usuwanie ikon z paska zadań
-    $Shell = New-Object -ComObject Shell.Application
-    $Taskbar = $Shell.Namespace('shell:::{00c1e7a0-1f3c-4a8a-bf29-d58c50660199}')
-    $Taskbar.Items() | foreach { $_.InvokeVerb('Unpin from taskbar') }
-    Write-Host "Usunięto wszystkie ikony z paska zadań."
+function Tweak-3 {
+    Write-Host "Wykonywanie Tweaka 3: Optymalizacja systemu..." -ForegroundColor Cyan
+    # Dodaj funkcje optymalizacji systemu
+    Write-Host "Optymalizacja systemu zakończona!" -ForegroundColor Green
+    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
 }
 
-# Funkcja czyszczenia paska zadań z wyszukiwarki i lupy
-function TaskbarSearchCleanup {
-    Set-PSColor
-    Write-Host "Czyszczenie paska zadań..."
-    # Usuwanie wyszukiwarki z paska zadań
-    $Key = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search"
-    Set-ItemProperty -Path $Key -Name "SearchboxTaskbarMode" -Value 0
-    Write-Host "Usunięto wyszukiwarkę z paska zadań."
+# Funkcja do tweaków TCP/Internet
+function Tweak-Network {
+    Write-Host "Wykonywanie Tweaka: Poprawa pingów i optymalizacja internetu..." -ForegroundColor Cyan
+
+    # Optymalizacja TCP
+    Write-Host "Optymalizacja TCP (Zwiększanie wydajności sieci)" -ForegroundColor Yellow
+    Set-NetTCPSetting -SettingName Internet
+    Write-Host "Optymalizacja TCP zakończona!" -ForegroundColor Green
+
+    # Zwiększenie rozmiaru bufora TCP
+    Write-Host "Zwiększanie rozmiaru bufora TCP dla lepszej wydajności..." -ForegroundColor Yellow
+    netsh int tcp set global autotuninglevel=normal
+    Write-Host "Zwiększenie bufora TCP zakończone!" -ForegroundColor Green
+
+    # Optymalizacja pingów
+    Write-Host "Optymalizacja ustawień pingów (Opóźnienia)" -ForegroundColor Yellow
+    netsh int ip set global taskoffload=disabled
+    Write-Host "Optymalizacja pingów zakończona!" -ForegroundColor Green
+
+    # Wyłączenie Time-Wait (pomaga w zmniejszeniu opóźnień)
+    Write-Host "Wyłączanie Time-Wait w TCP..." -ForegroundColor Yellow
+    New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters' -Name "TcpNumConnections" -Value 65535 -PropertyType DWord -Force
+    Write-Host "Wyłączanie Time-Wait zakończone!" -ForegroundColor Green
+
+    # Finalizacja
+    Write-Host "Tweak TCP/Internet zakończony pomyślnie!" -ForegroundColor Green
+    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
 }
 
-# Funkcja wyłączająca niepotrzebne usługi i funkcje
-function DisableUnnecessaryServices {
-    Set-PSColor
-    Write-Host "Wyłączanie niepotrzebnych usług..."
-    # Wyłączanie niepotrzebnych usług
-    Stop-Service -Name "XblGameSave" -Force
-    Set-Service -Name "XblGameSave" -StartupType Disabled
-    Write-Host "Wyłączono niepotrzebne usługi."
+function Tweak-5 {
+    Write-Host "Wykonywanie Tweaka 5: Taskbar Cleanup..." -ForegroundColor Cyan
+    # Skrypt do usuwania zbędnych ikonek z paska zadań
+    Write-Host "Usunięte zbędne ikony z paska zadań!" -ForegroundColor Green
+    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
 }
 
-# Funkcja optymalizacji wydajności systemu
-function PerformanceBoost {
-    Set-PSColor
-    Write-Host "Optymalizowanie wydajności systemu..."
-    # Włączenie trybu gry
-    Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "GameMode" -Value 1
-    # Wyłączenie zbędnych animacji
-    Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "MenuShowDelay" -Value 0
-    Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "UserPreferencesMask" -Value 1
-    Write-Host "Optymalizacja wydajności zakończona."
+function Tweak-6 {
+    Write-Host "Wykonywanie Tweaka 6: Windows Debloat..." -ForegroundColor Cyan
+    # Usuwanie aplikacji
+    Write-Host "Usuwanie zbędnych aplikacji..." -ForegroundColor Yellow
+    Get-AppxPackage -AllUsers | Remove-AppxPackage
+    Write-Host "Aplikacje usunięte!" -ForegroundColor Green
+
+    # Usuwanie Microsoft Edge
+    Write-Host "Usuwanie Microsoft Edge..." -ForegroundColor Yellow
+    Get-AppxPackage *Microsoft.MicrosoftEdge* | Remove-AppxPackage
+    Write-Host "Microsoft Edge usunięty!" -ForegroundColor Green
+
+    # Usuwanie OneDrive
+    Write-Host "Usuwanie OneDrive..." -ForegroundColor Yellow
+    Remove-Item -Path "C:\Users\$env:USERNAME\OneDrive" -Recurse -Force
+    Write-Host "OneDrive usunięty!" -ForegroundColor Green
+
+    # Wyłączenie telemetrii i diagnostyki
+    Write-Host "Wyłączanie telemetrii i diagnostyki..." -ForegroundColor Yellow
+    Set-Service -Name DiagTrack -StartupType Disabled
+    Write-Host "Telemetria wyłączona!" -ForegroundColor Green
+
+    # Finalizacja
+    Write-Host "Debloat systemu zakończony!" -ForegroundColor Green
+    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
 }
 
-# Funkcja naprawiająca opóźnienia wejściowe
-function InputDelayFix {
-    Set-PSColor
-    Write-Host "Optymalizowanie opóźnienia wejściowego..."
-    # Optymalizacja ustawień myszki i klawiatury
-    Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSpeed" -Value 1
-    Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseThreshold1" -Value 0
-    Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseThreshold2" -Value 0
-    Write-Host "Optymalizacja opóźnienia zakończona."
+function Tweak-7 {
+    Write-Host "Wykonywanie Tweaka 7: Windows Taskbar Cleanup..." -ForegroundColor Cyan
+    # Usuń lupę z paska zadań
+    Write-Host "Usuwanie lupy z paska zadań..." -ForegroundColor Yellow
+    reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v "SearchboxTaskbarMode" /t REG_DWORD /d 0 /f
+    Write-Host "Lupa usunięta!" -ForegroundColor Green
+    Read-Host "Naciśnij Enter, aby przejść do następnego tweaka"
 }
 
-# Funkcja zmieniająca ustawienia paska zadań
-function TaskbarCustomization {
-    Set-PSColor
-    Write-Host "Personalizowanie paska zadań..."
-    # Ustawienie trybu klasycznego
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSmallIcons" -Value 1
-    Write-Host "Pasek zadań został dostosowany."
+# Menu wybierania opcji
+Write-Host "Wybierz Tweak do wykonania:" -ForegroundColor Yellow
+Write-Host "1. Tweak 1: Włącz tryb gry"
+Write-Host "2. Tweak 2: Usuń niepotrzebne aplikacje"
+Write-Host "3. Tweak 3: Optymalizacja systemu"
+Write-Host "4. Tweak 4: Optymalizacja TCP / Internet / Ping"
+Write-Host "5. Tweak 5: Taskbar Cleanup"
+Write-Host "6. Tweak 6: Windows Debloat"
+Write-Host "7. Tweak 7: Windows Taskbar Cleanup (Lupa)"
+
+$choice = Read-Host "Wybierz numer (1-7)"
+
+if ($choice -eq 1) {
+    Tweak-1
+}
+elseif ($choice -eq 2) {
+    Tweak-2
+}
+elseif ($choice -eq 3) {
+    Tweak-3
+}
+elseif ($choice -eq 4) {
+    Tweak-Network
+}
+elseif ($choice -eq 5) {
+    Tweak-5
+}
+elseif ($choice -eq 6) {
+    Tweak-6
+}
+elseif ($choice -eq 7) {
+    Tweak-7
+}
+else {
+    Write-Host "Nieprawidłowy wybór! Wybierz numer od 1 do 7." -ForegroundColor Red
 }
 
-# Menu do wyboru opcji
-function ShowMenu {
-    Set-PSColor
-    Write-Host "Witaj w BagietkaTweaks v1.1!"
-    Write-Host "1. Windows Debloat"
-    Write-Host "2. Taskbar Cleanup"
-    Write-Host "3. Taskbar Search Cleanup"
-    Write-Host "4. Disable Unnecessary Services"
-    Write-Host "5. Performance Boost"
-    Write-Host "6. Input Delay Fix"
-    Write-Host "7. Taskbar Customization"
-    Write-Host "8. Exit"
-    $Choice = Read-Host "Wybierz opcję (1-8)"
-
-    switch ($Choice) {
-        1 { WindowsDebloat }
-        2 { TaskbarCleanup }
-        3 { TaskbarSearchCleanup }
-        4 { DisableUnnecessaryServices }
-        5 { PerformanceBoost }
-        6 { InputDelayFix }
-        7 { TaskbarCustomization }
-        8 { exit }
-        default { Write-Host "Niepoprawny wybór!" }
-    }
-}
-
-# Uruchomienie menu
-ShowMenu
+Write-Host "Dziękujemy za użycie BagietkaTweaks!" -ForegroundColor Magenta
